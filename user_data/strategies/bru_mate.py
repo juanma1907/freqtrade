@@ -57,7 +57,7 @@ class bru_mate(IStrategy):
     #a = 500/data["bpi"]["USD"]["rate_float"]    
 
     minimal_roi = {
-        "0": 0.02
+        "0": 0.07
     }
 
     #b = 1000/data["bpi"]["USD"]["rate_float"]
@@ -65,7 +65,7 @@ class bru_mate(IStrategy):
 
     ## Optimal stoploss designed for the strategy.
     ## This attribute will be overridden if the config file contains "stoploss".
-    stoploss = -0.04
+    stoploss = -0.07
     use_custom_stoploss = True
 
     # Trailing stoploss
@@ -437,7 +437,7 @@ class bru_mate(IStrategy):
 
         # emas_str = self.dp.current_blacklist() 
 
-        emas_str = ["ema20_15m","ema100_15m","ema200_15m","ema20_1h","ema100_1h","ema200_1h","ema20_4h","ema100_4h","ema200_4h"]
+        emas_str = ["ema200_15m","ema20_1h","ema100_4h"]
 
         emas = list([])
 
@@ -446,6 +446,8 @@ class bru_mate(IStrategy):
         for ema in emas_str:
             emas.append(float(dataframe[ema].iloc[-1]))
             ema_mas_cercana.append(abs(close-float(dataframe[ema].iloc[-1])))
+
+        print(emas)
 
 
         #emas_str = list(['ema20 15m', 'ema100 15m', 'ema200 15m', 'ema20 1h', 'ema100 1h', 'ema200 1h', 'ema20 4h', 'ema100 4h', 'ema200 4h'])
