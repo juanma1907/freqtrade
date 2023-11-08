@@ -546,6 +546,11 @@ class bru_mate(IStrategy):
         #indice_ema_mas_cercana = int(emas_str.index(ema_entrada))
 
         new_entryprice = float(dataframe[ema_entrada].iloc[-1]) 
+        print('-------------')
+        print('-------------')
+        print(ema_entrada, new_entryprice)
+        print('-------------')
+        print('-------------')
         #path_archivo_ema = os.path.join(os.getcwd(), "ema.py")
         #init = 'ema = ' + "'" + ema_entrada + "'"
         #with open(path_archivo_ema, 'w') as archivo_ema:
@@ -579,8 +584,8 @@ class bru_mate(IStrategy):
 
     def custom_exit(self, pair: str, trade: 'Trade', current_time: 'datetime', current_rate: float, current_profit: float, **kwargs):
 
-        tp_signal_price_long = trade.open_rate + 100
-        tp_signal_price_short = trade.open_rate - 100
+        tp_signal_price_long = trade.open_rate + 10
+        tp_signal_price_short = trade.open_rate - 10
 
         if not trade.is_short and current_rate >= tp_signal_price_long:
 
@@ -589,3 +594,23 @@ class bru_mate(IStrategy):
         if trade.is_short and current_rate <= tp_signal_price_short:
 
             return True
+
+    def custom_exit_price(self, pair: str, trade: Trade,
+                          current_time: datetime, proposed_rate: float,
+                          current_profit: float, exit_tag: Optional[str], **kwargs) -> float:
+
+        dataframe, last_updated = self.dp.get_analyzed_dataframe(pair=pair,
+                                                                timeframe=self.timeframe)
+
+        tp_signal_price_long = trade.open_rate + 100
+        tp_signal_price_short = trade.open_rate - 100
+
+        close = float(dataframe['close'].iloc[-1])
+
+        if not trade.is_short and close >= tp_signal_price_long:
+            new_exitprice = tp_signal_price_long
+            return new_exitprice
+
+        if trade.is_short and close <= tp_signal_price_short:
+            new_exitprice = tp_signal_price_short
+            return new_exitprice
