@@ -18,7 +18,7 @@ from freqtrade.strategy import (BooleanParameter, CategoricalParameter, DecimalP
 import talib.abstract as ta
 import pandas_ta as pta
 from technical import qtpylib
-from freqtrade.strategy import IStrategy, merge_informative_pair, stoploss_from_open
+from freqtrade.strategy import IStrategy, merge_informative_pair, stoploss_from_open, stoploss_from_absolute
 import requests as requests
 from freqtrade.persistence import Trade
 
@@ -577,9 +577,11 @@ class bru_mate(IStrategy):
 
     def custom_stoploss(self, pair: str, trade: 'Trade', current_time: datetime,
                         current_rate: float, current_profit: float, **kwargs) -> float:
-        stop = 1000/trade.open_rate
+        # stop = 1000/trade.open_rate
+        stoploss_price = trade.open_rate - 100
 
-        return stoploss_from_open(-stop, current_profit, is_short=trade.is_short)
+        # return stoploss_from_open(-stop, current_profit, is_short=trade.is_short)
+        return stoploss_from_absolute(stoploss_price, current_rate, is_short=trade.is_short)
 
 
     def custom_exit(self, pair: str, trade: 'Trade', current_time: 'datetime', current_rate: float, current_profit: float, **kwargs):
