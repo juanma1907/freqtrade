@@ -607,6 +607,12 @@ class bru_mate(IStrategy):
         tp_signal_price_long = trade.open_rate + 100
         tp_signal_price_short = trade.open_rate - 100
 
+        print('-------------')
+        print('-------------')
+        print(trade.open_rate)
+        print('-------------')
+        print('-------------')
+
         close = float(dataframe['close'].iloc[-1])
 
         if not trade.is_short and close >= tp_signal_price_long:
