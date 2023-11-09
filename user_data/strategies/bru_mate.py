@@ -611,8 +611,18 @@ class bru_mate(IStrategy):
 
         if not trade.is_short and close >= tp_signal_price_long:
             new_exitprice = tp_signal_price_long
+            print('-------------')
+            print('-------------')
+            print(new_exitprice)
+            print('-------------')
+            print('-------------')
             return new_exitprice
 
         if trade.is_short and close <= tp_signal_price_short:
             new_exitprice = tp_signal_price_short
+            print('-------------')
+            print('-------------')
+            print(new_exitprice)
+            print('-------------')
+            print('-------------')
             return new_exitprice
