@@ -578,7 +578,7 @@ class bru_mate(IStrategy):
     def custom_stoploss(self, pair: str, trade: 'Trade', current_time: datetime,
                         current_rate: float, current_profit: float, **kwargs) -> float:
         # stop = 1000/trade.open_rate
-        stoploss_price = trade.open_rate - 100
+        stoploss_price = trade.open_rate - 1000
 
         # return stoploss_from_open(-stop, current_profit, is_short=trade.is_short)
         return stoploss_from_absolute(stoploss_price, current_rate, is_short=trade.is_short)
@@ -615,7 +615,7 @@ class bru_mate(IStrategy):
 
         close = float(dataframe['close'].iloc[-1])
 
-        if not trade.is_short and close >= tp_signal_price_long:
+        if not trade.is_short:
             new_exitprice = tp_signal_price_long
             print('-------------')
             print('-------------')
@@ -624,7 +624,7 @@ class bru_mate(IStrategy):
             print('-------------')
             return new_exitprice
 
-        if trade.is_short and close <= tp_signal_price_short:
+        if trade.is_short:
             new_exitprice = tp_signal_price_short
             print('-------------')
             print('-------------')
