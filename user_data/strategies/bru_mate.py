@@ -102,7 +102,7 @@ class bru_mate(IStrategy):
         'entry': 'limit',
         'exit': 'limit',
         'stoploss': 'limit',
-        'stoploss_on_exchange': True
+        'stoploss_on_exchange': False
     }
 
     # Optional order time in force.
