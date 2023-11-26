@@ -628,13 +628,13 @@ class bru_mate(IStrategy):
 
         print('-------------')
         print('-------------')
-        print(trade.open_rate)
+        print(exit_tag)
         print('-------------')
         print('-------------')
 
         close = float(dataframe['close'].iloc[-1])
 
-        if not trade.is_short:
+        if not trade.is_short and exit_tag == 'custom_exit':
             new_exitprice = tp_signal_price_long
             print('-------------')
             print('-------------')
@@ -643,7 +643,7 @@ class bru_mate(IStrategy):
             print('-------------')
             return new_exitprice
 
-        if trade.is_short:
+        if trade.is_short and exit_tag == 'custom_exit':
             new_exitprice = tp_signal_price_short
             print('-------------')
             print('-------------')
