@@ -102,7 +102,7 @@ class bru_mate(IStrategy):
         'entry': 'limit',
         'exit': 'limit',
         'stoploss': 'limit',
-        'stoploss_on_exchange': False
+        'stoploss_on_exchange': True
     }
 
     # Optional order time in force.
@@ -575,13 +575,23 @@ class bru_mate(IStrategy):
         """
         return 10.0
 
-    def custom_stoploss(self, pair: str, trade: 'Trade', current_time: datetime,
-                        current_rate: float, current_profit: float, **kwargs) -> float:
-        # stop = 1000/trade.open_rate
-        stoploss_price = trade.open_rate - 1000
+    # def custom_stoploss(self, pair: str, trade: 'Trade', current_time: datetime,
+    #                     current_rate: float, current_profit: float, **kwargs) -> float:
+    #     # stop = 1000/trade.open_rate
+    #     stoploss_price = trade.open_rate - 1000
 
-        # return stoploss_from_open(-stop, current_profit, is_short=trade.is_short)
-        return stoploss_from_absolute(stoploss_price, current_rate, is_short=trade.is_short)
+    #     # return stoploss_from_open(-stop, current_profit, is_short=trade.is_short)
+    #     return stoploss_from_absolute(stoploss_price, current_rate, is_short=trade.is_short)
+    
+    def custom_stoploss(self, pair: str, trade: 'Trade', current_time: datetime,
+                        current_rate: float, current_profit: float, after_fill: bool,
+                        **kwargs) -> Optional[float]:
+        
+        stoploss_price = (trade.open_rate + 1000) if trade.is_short else (trade.open_rate - 1000)
+        sign = 1 if trade.is_short else -1
+        return stoploss_from_absolute(sign * stoploss_price, 
+                                      current_rate, is_short=trade.is_short,
+                                      leverage=trade.leverage)
 
 
     def custom_exit(self, pair: str, trade: 'Trade', current_time: 'datetime', current_rate: float, current_profit: float, **kwargs):
@@ -590,10 +600,19 @@ class bru_mate(IStrategy):
         tp_signal_price_short = trade.open_rate - 10
 
         if not trade.is_short and current_rate >= tp_signal_price_long:
+            print('-------------')
+            print('-------------')
+            print('EXIT SIGNAL LONG')
+            print('-------------')
+            print('-------------')
 
             return True
-
-        if trade.is_short and current_rate <= tp_signal_price_short:
+        elif trade.is_short and current_rate <= tp_signal_price_short:
+            print('-------------')
+            print('-------------')
+            print('EXIT SIGNAL SHORT')
+            print('-------------')
+            print('-------------')
 
             return True
 
