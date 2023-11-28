@@ -88,19 +88,12 @@ class bru_mate(IStrategy):
     # Strategy parameters
     buy_rsi = IntParameter(10, 40, default=29, space="buy")
     sell_rsi = IntParameter(60, 90, default=71, space="sell")
-    print('------------------------------')
-    print('------------------------------')
-    print('------------------------------')
-    print(buy_rsi)
-    print(sell_rsi)
-    print('------------------------------')
-    print('------------------------------')
-    print('------------------------------')
 
     # Optional order type mapping.
     order_types = {
         'entry': 'limit',
         'exit': 'limit',
+        'emergency_exit': 'market',
         'stoploss': 'limit',
         'stoploss_on_exchange': True
     }
@@ -587,11 +580,30 @@ class bru_mate(IStrategy):
                         current_rate: float, current_profit: float, after_fill: bool,
                         **kwargs) -> Optional[float]:
         
-        stoploss_price = (trade.open_rate + 1000) if trade.is_short else (trade.open_rate - 1000)
-        sign = 1 if trade.is_short else -1
-        return stoploss_from_absolute(sign * stoploss_price, 
+        print('-------------')
+        print('-------------')
+        print(trade.stop_loss, trade.stoploss_order_id)
+        print('-------------')
+        print('-------------')
+
+        stoploss_price = (trade.open_rate + 100) if trade.is_short else (trade.open_rate - 100)
+
+        if trade.stop_loss == stoploss_price:
+            return None
+        return stoploss_from_absolute(stoploss_price, 
                                       current_rate, is_short=trade.is_short,
                                       leverage=trade.leverage)
+    
+    def check_exit_timeout(self, pair: str, trade: Trade, order: 'Order',
+                           current_time: datetime, **kwargs) -> bool:
+        dataframe, _ = self.dp.get_analyzed_dataframe(pair, self.timeframe)
+        candle = dataframe.iloc[-1].squeeze()
+        price = candle['high'] if trade.is_short else candle['low']
+        if trade.open_rate > price and not trade.is_short:
+            return True
+        elif trade.open_rate < price and trade.is_short:
+            return True
+        return False
 
 
     def custom_exit(self, pair: str, trade: 'Trade', current_time: 'datetime', current_rate: float, current_profit: float, **kwargs):
