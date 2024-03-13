@@ -1,8 +1,8 @@
 # Freqtrade rules
 config*.json
-*.sqlite
-*.sqlite-shm
-*.sqlite-wal
+#*.sqlite
+#*.sqlite-shm
+#*.sqlite-wal
 logfile.txt
 user_data/strategies/*
 !user_data/strategy/sample_strategy.py
